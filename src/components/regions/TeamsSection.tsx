@@ -20,12 +20,12 @@ function getStanding(standings: Standing[], slug: string) {
 
 export function TeamsSection({ teams, standings }: TeamsSectionProps) {
   return (
-    <section className="rounded-[28px] border border-atlas-border/70 bg-atlas-surface/60 p-5 sm:p-7">
+    <section className="rounded-[28px] border border-slate-200 bg-white p-5 shadow-soft sm:p-7">
       <div className="mb-6">
-        <h2 className="text-2xl font-black uppercase tracking-wide text-white">
+        <h2 className="text-2xl font-black uppercase tracking-wide text-slate-950">
           Teams
         </h2>
-        <p className="mt-2 text-sm text-atlas-secondary">
+        <p className="mt-2 text-sm text-slate-500">
           MPL Indonesia team list with current standing and match record.
         </p>
       </div>
@@ -37,9 +37,9 @@ export function TeamsSection({ teams, standings }: TeamsSectionProps) {
           return (
             <article
               key={team.slug}
-              className="flex items-center gap-4 rounded-2xl border border-atlas-border bg-atlas-background/70 p-4 transition hover:border-atlas-accent/60"
+              className="flex items-center gap-4 rounded-2xl border border-slate-200 bg-slate-50 p-4 transition hover:border-blue-300 hover:bg-white"
             >
-              <div className="grid h-16 w-16 shrink-0 place-items-center rounded-2xl border border-white/10 bg-atlas-surface p-2">
+              <div className="grid h-16 w-16 shrink-0 place-items-center rounded-2xl border border-slate-200 bg-white p-2">
                 <Image
                   src={team.logoSrc}
                   alt={`${team.name} logo`}
@@ -51,21 +51,21 @@ export function TeamsSection({ teams, standings }: TeamsSectionProps) {
               <div className="min-w-0">
                 <Link
                   href={`/regions/mpl-id/teams/${team.slug}`}
-                  className="truncate font-bold text-white transition hover:text-atlas-accent"
+                  className="truncate font-bold text-slate-950 transition hover:text-atlas-accent"
                 >
                   {team.name}
                 </Link>
-                <p className="mt-1 text-sm text-atlas-secondary">
+                <p className="mt-1 text-sm text-slate-500">
                   Rank #{standing.rank}
                 </p>
-                <p className="mt-2 text-sm font-semibold text-slate-200">
+                <p className="mt-2 text-sm font-semibold text-slate-700">
                   {standing.matchRecord}
                 </p>
                 <div className="mt-2 flex gap-1">
                   {standing.form.map((result, index) => (
                     <span
                       key={`${team.slug}-${result}-${index}`}
-                      className="text-xs font-bold text-atlas-secondary"
+                      className="text-xs font-bold text-slate-500"
                     >
                       {result}
                     </span>

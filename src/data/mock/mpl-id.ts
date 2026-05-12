@@ -1,18 +1,14 @@
-import type {
-  Match,
-  Region,
-  Standing,
-  StandingsSnapshot,
-  Team
-} from "@/types/regions";
+import { calculateStandings } from "@/lib/ranking";
+import type { Match, Region, Season, StandingsSnapshot, Team, Week } from "@/types/regions";
+
+const REGION_SLUG = "mpl-id";
+const SEASON_ID = "mpl-id-s14";
 
 export const mplIdRegion: Region = {
+  id: "region-mpl-id",
   name: "MPL Indonesia",
   shortName: "MPL ID",
-  slug: "mpl-id",
-  season: "Season 14",
-  currentWeek: "Week 7",
-  stage: "Regular Season",
+  slug: REGION_SLUG,
   subtitle:
     "Current standings, match schedule, and team overview for Indonesia's MPL season.",
   logoSrc: "/logo/regions/LOGO_MPL-ID-NEW-2024-400.webp"
@@ -20,368 +16,71 @@ export const mplIdRegion: Region = {
 
 export const mplIdTeams: Team[] = [
   {
+    id: "team-onic",
+    regionSlug: REGION_SLUG,
     name: "ONIC Esports",
     slug: "onic",
     logoSrc: "/logo/teams/mpl-id/onic-b-256.png"
   },
   {
+    id: "team-rrq-hoshi",
+    regionSlug: REGION_SLUG,
     name: "RRQ Hoshi",
     slug: "rrq-hoshi",
     logoSrc: "/logo/teams/mpl-id/rrq-500.png"
   },
   {
+    id: "team-liquid-id",
+    regionSlug: REGION_SLUG,
     name: "Team Liquid ID",
     slug: "team-liquid-id",
     logoSrc: "/logo/teams/mpl-id/TLID-Primary500x500.png"
   },
   {
+    id: "team-bigetron-alpha",
+    regionSlug: REGION_SLUG,
     name: "Bigetron Alpha By Vit",
     slug: "bigetron-alpha",
     logoSrc: "/logo/teams/mpl-id/btr_vit.png"
   },
   {
+    id: "team-evos-glory",
+    regionSlug: REGION_SLUG,
     name: "EVOS Glory",
     slug: "evos-glory",
     logoSrc: "/logo/teams/mpl-id/evos-500.png"
   },
   {
+    id: "team-geek-fam",
+    regionSlug: REGION_SLUG,
     name: "Geek Fam",
     slug: "geek-fam",
     logoSrc: "/logo/teams/mpl-id/geek-500.png"
   },
   {
+    id: "team-alter-ego",
+    regionSlug: REGION_SLUG,
     name: "Alter Ego",
     slug: "alter-ego",
     logoSrc: "/logo/teams/mpl-id/ae-256.png"
   },
   {
+    id: "team-navi",
+    regionSlug: REGION_SLUG,
     name: "NAVI",
     slug: "navi",
     logoSrc: "/logo/teams/mpl-id/NAVI-2.png"
   },
   {
+    id: "team-dewa-united",
+    regionSlug: REGION_SLUG,
     name: "Dewa United Esports",
     slug: "dewa-united",
     logoSrc: "/logo/teams/mpl-id/dewa-united-500.png"
   }
 ];
 
-export const mplIdStandings: Standing[] = [
-  {
-    rank: 1,
-    teamSlug: "onic",
-    matchRecord: "10 - 2",
-    gameRecord: "22 - 7",
-    gameDifference: 15,
-    matchPoints: 10,
-    form: ["W", "W", "L", "W", "W"],
-    status: "upper-bracket"
-  },
-  {
-    rank: 2,
-    teamSlug: "rrq-hoshi",
-    matchRecord: "9 - 3",
-    gameRecord: "20 - 8",
-    gameDifference: 12,
-    matchPoints: 9,
-    form: ["W", "L", "W", "W", "W"],
-    status: "upper-bracket"
-  },
-  {
-    rank: 3,
-    teamSlug: "team-liquid-id",
-    matchRecord: "8 - 4",
-    gameRecord: "18 - 9",
-    gameDifference: 9,
-    matchPoints: 8,
-    form: ["W", "W", "W", "L", "W"],
-    status: "playoff-secured"
-  },
-  {
-    rank: 4,
-    teamSlug: "bigetron-alpha",
-    matchRecord: "7 - 5",
-    gameRecord: "16 - 11",
-    gameDifference: 5,
-    matchPoints: 7,
-    form: ["L", "W", "W", "L", "W"],
-    status: "playoff-secured"
-  },
-  {
-    rank: 5,
-    teamSlug: "evos-glory",
-    matchRecord: "6 - 6",
-    gameRecord: "14 - 13",
-    gameDifference: 1,
-    matchPoints: 6,
-    form: ["W", "L", "L", "W", "W"],
-    status: "competing"
-  },
-  {
-    rank: 6,
-    teamSlug: "geek-fam",
-    matchRecord: "5 - 7",
-    gameRecord: "12 - 15",
-    gameDifference: -3,
-    matchPoints: 5,
-    form: ["L", "W", "L", "W", "L"],
-    status: "competing"
-  },
-  {
-    rank: 7,
-    teamSlug: "alter-ego",
-    matchRecord: "4 - 8",
-    gameRecord: "10 - 17",
-    gameDifference: -7,
-    matchPoints: 4,
-    form: ["L", "L", "W", "L", "L"],
-    status: "competing"
-  },
-  {
-    rank: 8,
-    teamSlug: "navi",
-    matchRecord: "3 - 9",
-    gameRecord: "8 - 21",
-    gameDifference: -13,
-    matchPoints: 3,
-    form: ["L", "L", "L", "W", "L"],
-    status: "eliminated"
-  },
-  {
-    rank: 9,
-    teamSlug: "dewa-united",
-    matchRecord: "2 - 10",
-    gameRecord: "6 - 25",
-    gameDifference: -19,
-    matchPoints: 2,
-    form: ["L", "L", "L", "L", "W"],
-    status: "eliminated"
-  }
-];
-
-const weekOneStandings: Standing[] = [
-  {
-    rank: 1,
-    teamSlug: "rrq-hoshi",
-    matchRecord: "2 - 0",
-    gameRecord: "4 - 1",
-    gameDifference: 3,
-    matchPoints: 2,
-    form: ["W", "W"],
-    status: "competing"
-  },
-  {
-    rank: 2,
-    teamSlug: "onic",
-    matchRecord: "2 - 0",
-    gameRecord: "4 - 2",
-    gameDifference: 2,
-    matchPoints: 2,
-    form: ["W", "W"],
-    status: "competing"
-  },
-  {
-    rank: 3,
-    teamSlug: "team-liquid-id",
-    matchRecord: "1 - 1",
-    gameRecord: "3 - 2",
-    gameDifference: 1,
-    matchPoints: 1,
-    form: ["W", "L"],
-    status: "competing"
-  },
-  {
-    rank: 4,
-    teamSlug: "evos-glory",
-    matchRecord: "1 - 1",
-    gameRecord: "3 - 3",
-    gameDifference: 0,
-    matchPoints: 1,
-    form: ["L", "W"],
-    status: "competing"
-  },
-  {
-    rank: 5,
-    teamSlug: "bigetron-alpha",
-    matchRecord: "1 - 1",
-    gameRecord: "2 - 3",
-    gameDifference: -1,
-    matchPoints: 1,
-    form: ["W", "L"],
-    status: "competing"
-  },
-  {
-    rank: 6,
-    teamSlug: "geek-fam",
-    matchRecord: "1 - 1",
-    gameRecord: "2 - 3",
-    gameDifference: -1,
-    matchPoints: 1,
-    form: ["L", "W"],
-    status: "competing"
-  },
-  {
-    rank: 7,
-    teamSlug: "alter-ego",
-    matchRecord: "0 - 1",
-    gameRecord: "1 - 2",
-    gameDifference: -1,
-    matchPoints: 0,
-    form: ["L"],
-    status: "competing"
-  },
-  {
-    rank: 8,
-    teamSlug: "navi",
-    matchRecord: "0 - 1",
-    gameRecord: "0 - 2",
-    gameDifference: -2,
-    matchPoints: 0,
-    form: ["L"],
-    status: "competing"
-  },
-  {
-    rank: 9,
-    teamSlug: "dewa-united",
-    matchRecord: "0 - 2",
-    gameRecord: "1 - 4",
-    gameDifference: -3,
-    matchPoints: 0,
-    form: ["L", "L"],
-    status: "competing"
-  }
-];
-
-const weekFourStandings: Standing[] = [
-  {
-    rank: 1,
-    teamSlug: "onic",
-    matchRecord: "6 - 1",
-    gameRecord: "13 - 5",
-    gameDifference: 8,
-    matchPoints: 6,
-    form: ["W", "W", "L", "W", "W"],
-    status: "upper-bracket"
-  },
-  {
-    rank: 2,
-    teamSlug: "rrq-hoshi",
-    matchRecord: "5 - 2",
-    gameRecord: "12 - 6",
-    gameDifference: 6,
-    matchPoints: 5,
-    form: ["W", "L", "W", "W", "L"],
-    status: "upper-bracket"
-  },
-  {
-    rank: 3,
-    teamSlug: "team-liquid-id",
-    matchRecord: "5 - 2",
-    gameRecord: "11 - 7",
-    gameDifference: 4,
-    matchPoints: 5,
-    form: ["W", "W", "W", "L", "W"],
-    status: "playoff-secured"
-  },
-  {
-    rank: 4,
-    teamSlug: "bigetron-alpha",
-    matchRecord: "4 - 3",
-    gameRecord: "10 - 8",
-    gameDifference: 2,
-    matchPoints: 4,
-    form: ["L", "W", "W", "L", "W"],
-    status: "competing"
-  },
-  {
-    rank: 5,
-    teamSlug: "evos-glory",
-    matchRecord: "3 - 4",
-    gameRecord: "8 - 10",
-    gameDifference: -2,
-    matchPoints: 3,
-    form: ["W", "L", "L", "W", "L"],
-    status: "competing"
-  },
-  {
-    rank: 6,
-    teamSlug: "geek-fam",
-    matchRecord: "3 - 4",
-    gameRecord: "7 - 10",
-    gameDifference: -3,
-    matchPoints: 3,
-    form: ["L", "W", "L", "W", "L"],
-    status: "competing"
-  },
-  {
-    rank: 7,
-    teamSlug: "alter-ego",
-    matchRecord: "2 - 5",
-    gameRecord: "6 - 11",
-    gameDifference: -5,
-    matchPoints: 2,
-    form: ["L", "L", "W", "L", "L"],
-    status: "competing"
-  },
-  {
-    rank: 8,
-    teamSlug: "navi",
-    matchRecord: "2 - 5",
-    gameRecord: "5 - 12",
-    gameDifference: -7,
-    matchPoints: 2,
-    form: ["L", "W", "L", "L", "L"],
-    status: "competing"
-  },
-  {
-    rank: 9,
-    teamSlug: "dewa-united",
-    matchRecord: "1 - 6",
-    gameRecord: "4 - 13",
-    gameDifference: -9,
-    matchPoints: 1,
-    form: ["L", "L", "L", "L", "W"],
-    status: "eliminated"
-  }
-];
-
-export const mplIdStandingsSnapshots: StandingsSnapshot[] = [
-  { week: 1, standings: weekOneStandings },
-  {
-    week: 2,
-    standings: weekOneStandings.map((standing) => ({
-      ...standing,
-      matchPoints: standing.matchPoints + (standing.rank <= 4 ? 1 : 0),
-      status: "competing"
-    }))
-  },
-  {
-    week: 3,
-    standings: weekOneStandings.map((standing) => ({
-      ...standing,
-      matchPoints: standing.matchPoints + (standing.rank <= 5 ? 2 : 1),
-      status: "competing"
-    }))
-  },
-  { week: 4, standings: weekFourStandings },
-  {
-    week: 5,
-    standings: weekFourStandings.map((standing) => ({
-      ...standing,
-      matchPoints: standing.matchPoints + (standing.rank <= 6 ? 1 : 0)
-    }))
-  },
-  {
-    week: 6,
-    standings: mplIdStandings.map((standing) => ({
-      ...standing,
-      matchPoints: Math.max(standing.matchPoints - 1, 0)
-    }))
-  },
-  { week: 7, standings: mplIdStandings }
-];
-
-export const mplIdMatchesByWeek: Record<number, Match[]> = {
+const matchesByWeekSource: Record<number, Omit<Match, "seasonId">[]> = {
   1: [
     {
       id: "mpl-id-w1-m1",
@@ -614,4 +313,57 @@ export const mplIdMatchesByWeek: Record<number, Match[]> = {
   ]
 };
 
+export const mplIdMatchesByWeek: Record<number, Match[]> = Object.fromEntries(
+  Object.entries(matchesByWeekSource).map(([week, matches]) => [
+    Number(week),
+    matches.map((match) => ({ ...match, seasonId: SEASON_ID }))
+  ])
+);
+
 export const mplIdMatches: Match[] = Object.values(mplIdMatchesByWeek).flat();
+
+function getMatchesThroughWeek(weekNumber: number) {
+  return mplIdMatches.filter((match) => match.week <= weekNumber);
+}
+
+export const mplIdStandingsSnapshots: StandingsSnapshot[] = Object.keys(
+  mplIdMatchesByWeek
+).map((week) => {
+  const weekNumber = Number(week);
+
+  return {
+    week: weekNumber,
+    standings: calculateStandings(mplIdTeams, getMatchesThroughWeek(weekNumber))
+  };
+});
+
+export const mplIdStandings =
+  mplIdStandingsSnapshots.find((snapshot) => snapshot.week === 7)?.standings ??
+  [];
+
+const weeks: Week[] = Object.entries(mplIdMatchesByWeek).map(
+  ([week, matches]) => {
+    const weekNumber = Number(week);
+
+    return {
+      id: `${SEASON_ID}-week-${weekNumber}`,
+      seasonId: SEASON_ID,
+      weekNumber,
+      label: `Week ${weekNumber}`,
+      matches,
+      standingsSnapshot:
+        mplIdStandingsSnapshots.find((snapshot) => snapshot.week === weekNumber)
+          ?.standings ?? []
+    };
+  }
+);
+
+export const mplIdCurrentSeason: Season = {
+  id: SEASON_ID,
+  regionSlug: REGION_SLUG,
+  name: "Season 14",
+  stage: "Regular Season",
+  currentWeek: 7,
+  totalMatches: 72,
+  weeks
+};

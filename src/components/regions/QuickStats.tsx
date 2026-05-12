@@ -23,12 +23,12 @@ export function QuickStats({
       {stats.map((stat) => (
         <article
           key={stat.label}
-          className="rounded-2xl border border-atlas-border bg-atlas-surface/70 p-5"
+          className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"
         >
-          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-atlas-secondary">
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
             {stat.label}
           </p>
-          <p className="mt-3 text-2xl font-bold text-white">{stat.value}</p>
+          <p className="mt-3 text-2xl font-bold text-slate-950">{stat.value}</p>
         </article>
       ))}
     </section>

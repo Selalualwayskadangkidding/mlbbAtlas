@@ -1,28 +1,59 @@
-import { Header } from "@/components/layout/Header";
-import { MplIdDashboard } from "@/components/regions/MplIdDashboard";
+import { CurrentStandings } from "@/components/regions/CurrentStandings";
+import { FeaturedMatchHighlight } from "@/components/regions/FeaturedMatchHighlight";
+import { RegionHero } from "@/components/regions/RegionHero";
 import {
   mplIdMatchesByWeek,
+  mplIdCurrentSeason,
   mplIdRegion,
   mplIdStandings,
-  mplIdStandingsSnapshots,
   mplIdTeams
 } from "@/data/mock/mpl-id";
 
-export default function MplIdPage() {
+function getCompactTeamName(slug: string) {
+  const team = mplIdTeams.find((item) => item.slug === slug);
+
   return (
-    <main className="min-h-screen bg-atlas-background text-atlas-primary">
-      <Header />
-      <div className="mx-auto flex w-full max-w-7xl flex-col gap-8 px-5 py-10 sm:px-8 lg:px-10">
-        <MplIdDashboard
-          region={mplIdRegion}
-          teams={mplIdTeams}
-          currentStandings={mplIdStandings}
-          standingsSnapshots={mplIdStandingsSnapshots}
-          matchesByWeek={mplIdMatchesByWeek}
-          seasonMatchCount={72}
-          matchesPlayedCount={42}
-        />
-      </div>
-    </main>
+    team?.name
+      .replace(" Esports", "")
+      .replace(" Hoshi", "")
+      .replace(" Glory", "")
+      .replace(" By Vit", "")
+      .replace("Team Liquid ID", "TLID") ?? "TBD"
+  );
+}
+
+export default function MplIdPage() {
+  const currentWeek = mplIdCurrentSeason.currentWeek;
+  const leaderStanding = mplIdStandings.find((standing) => standing.rank === 1);
+  const currentLeader = getCompactTeamName(leaderStanding?.teamSlug ?? "");
+  const featuredMatch =
+    mplIdMatchesByWeek[currentWeek]?.find((match) => match.status === "live") ??
+    mplIdMatchesByWeek[currentWeek]?.find(
+      (match) => match.status === "upcoming"
+    );
+
+  return (
+    <>
+      <RegionHero
+        region={mplIdRegion}
+        season={mplIdCurrentSeason}
+        currentLeader={currentLeader}
+        matchesPlayedLabel={`42/${mplIdCurrentSeason.totalMatches}`}
+        nextMatchLabel={
+          featuredMatch
+            ? `${getCompactTeamName(featuredMatch.teamASlug)} vs ${getCompactTeamName(
+                featuredMatch.teamBSlug
+              )}`
+            : "TBD"
+        }
+      />
+      <CurrentStandings
+        standings={mplIdStandings}
+        teams={mplIdTeams}
+        title="Current Standings"
+        description="Live MPL Indonesia table for the current mock season."
+      />
+      <FeaturedMatchHighlight match={featuredMatch} teams={mplIdTeams} />
+    </>
   );
 }

@@ -9,20 +9,39 @@ export type MatchStatus = "finished" | "live" | "upcoming";
 export type StandingViewMode = "current" | "after-selected-week";
 
 export interface Region {
+  id: string;
   name: string;
   shortName: string;
   slug: string;
-  season: string;
-  currentWeek: string;
-  stage: string;
   subtitle: string;
   logoSrc: string;
 }
 
+export interface Season {
+  id: string;
+  regionSlug: string;
+  name: string;
+  stage: string;
+  currentWeek: number;
+  totalMatches: number;
+  weeks: Week[];
+}
+
 export interface Team {
+  id: string;
+  regionSlug: string;
   name: string;
   slug: string;
   logoSrc: string;
+}
+
+export interface Week {
+  id: string;
+  seasonId: string;
+  weekNumber: number;
+  label: string;
+  matches: Match[];
+  standingsSnapshot: Standing[];
 }
 
 export interface Standing {
@@ -38,6 +57,7 @@ export interface Standing {
 
 export interface Match {
   id: string;
+  seasonId: string;
   week: number;
   teamASlug: string;
   teamBSlug: string;

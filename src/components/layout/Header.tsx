@@ -1,12 +1,32 @@
 const navigationItems = ["Home", "Regions", "Schedule", "Stats", "Teams"];
 
+interface HeaderNavItem {
+  label: string;
+  href: string;
+  active?: boolean;
+}
+
 interface HeaderProps {
   logoOnly?: boolean;
   variant?: "dark" | "light";
+  navItems?: HeaderNavItem[];
+  showActions?: boolean;
 }
 
-export function Header({ logoOnly = false, variant = "dark" }: HeaderProps) {
+export function Header({
+  logoOnly = false,
+  variant = "dark",
+  navItems,
+  showActions = true
+}: HeaderProps) {
   const isLight = variant === "light";
+  const resolvedNavItems =
+    navItems ??
+    navigationItems.map((item) => ({
+      label: item,
+      href: item === "Regions" ? "#regions" : "#",
+      active: false
+    }));
 
   return (
     <header
@@ -17,7 +37,7 @@ export function Header({ logoOnly = false, variant = "dark" }: HeaderProps) {
       }
     >
       <div className="mx-auto flex h-[74px] w-full max-w-7xl items-center justify-between px-5 sm:px-8 lg:px-10">
-        <a className="flex items-center gap-3" href="#">
+        <a className="flex items-center gap-3" href="/">
           <span className="grid h-8 w-8 place-items-center text-lg font-black text-atlas-accent">
             A
           </span>
@@ -33,18 +53,27 @@ export function Header({ logoOnly = false, variant = "dark" }: HeaderProps) {
         </a>
         {!logoOnly ? (
           <>
-            <nav className="hidden h-full items-center gap-9 text-sm font-medium uppercase tracking-[0.12em] text-atlas-secondary md:flex">
-              {navigationItems.map((item) => (
+            <nav className="hidden h-full items-center gap-7 text-sm font-medium uppercase tracking-[0.12em] text-atlas-secondary md:flex">
+              {resolvedNavItems.map((item) => (
                 <a
-                  className="flex h-full items-center border-b border-transparent transition hover:border-atlas-accent hover:text-atlas-primary"
-                  href={item === "Regions" ? "#regions" : "#"}
-                  key={item}
+                  className={
+                    item.active
+                      ? isLight
+                        ? "flex h-full items-center border-b border-atlas-accent text-slate-950 transition"
+                        : "flex h-full items-center border-b border-atlas-accent text-atlas-primary transition hover:text-atlas-primary"
+                      : isLight
+                        ? "flex h-full items-center border-b border-transparent text-slate-500 transition hover:border-atlas-accent hover:text-slate-950"
+                        : "flex h-full items-center border-b border-transparent transition hover:border-atlas-accent hover:text-atlas-primary"
+                  }
+                  href={item.href}
+                  key={item.href}
                 >
-                  {item}
+                  {item.label}
                 </a>
               ))}
             </nav>
-            <div className="hidden items-center gap-3 sm:flex">
+            {showActions ? (
+              <div className="hidden items-center gap-3 sm:flex">
               <span className="rounded-md border border-atlas-accent/50 bg-atlas-surface px-4 py-2 text-sm font-semibold text-blue-300">
                 S14
               </span>
@@ -54,7 +83,8 @@ export function Header({ logoOnly = false, variant = "dark" }: HeaderProps) {
               >
                 Watch live
               </a>
-            </div>
+              </div>
+            ) : null}
           </>
         ) : null}
       </div>
