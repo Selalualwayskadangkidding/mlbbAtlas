@@ -1,0 +1,34 @@
+{
+  "name": "mlbb-atlas",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "format": "prettier --write .",
+    "test": "echo \"No tests configured yet\"",
+    "test:unit": "echo \"No unit tests configured yet\"",
+    "test:e2e": "echo \"No e2e tests configured yet\"",
+    "db:migrate": "echo \"Database is not configured yet\"",
+    "db:seed": "echo \"Database is not configured yet\"",
+    "db:reset": "echo \"Database is not configured yet\""
+  },
+  "dependencies": {
+    "@types/node": "^20.12.12",
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "autoprefixer": "^10.4.19",
+    "eslint": "^8.57.0",
+    "eslint-config-next": "^14.2.3",
+    "next": "^14.2.3",
+    "postcss": "^8.4.38",
+    "prettier": "^3.2.5",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "tailwindcss": "^3.4.3",
+    "typescript": "^5.4.5"
+  },
+  "devDependencies": {}
+}
