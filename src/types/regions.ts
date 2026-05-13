@@ -8,6 +8,8 @@ export type MatchStatus = "finished" | "live" | "upcoming";
 
 export type StandingViewMode = "current" | "after-selected-week";
 
+export type VerifiedDataStatus = "verified" | "partial" | "placeholder";
+
 export interface Region {
   id: string;
   name: string;
@@ -24,6 +26,7 @@ export interface Season {
   stage: string;
   currentWeek: number;
   totalMatches: number;
+  totalTeams: number;
   weeks: Week[];
 }
 
@@ -31,6 +34,7 @@ export interface Team {
   id: string;
   regionSlug: string;
   name: string;
+  shortName: string;
   slug: string;
   logoSrc: string;
 }
@@ -58,18 +62,47 @@ export interface Standing {
 export interface Match {
   id: string;
   seasonId: string;
+  regionSlug: string;
   week: number;
-  teamASlug: string;
-  teamBSlug: string;
-  teamAScore: number | null;
-  teamBScore: number | null;
+  teamA: string;
+  teamB: string;
+  scoreA: number | null;
+  scoreB: number | null;
   status: MatchStatus;
   format: "BO3";
   date: string;
   time: string;
+  verifiedDataStatus: VerifiedDataStatus;
 }
 
 export interface StandingsSnapshot {
   week: number;
   standings: Standing[];
+}
+
+export interface StandingReference {
+  rank: number;
+  teamSlug: string;
+  matchRecord: string;
+  gameRecord: string;
+  gameDifference: number;
+}
+
+export interface StandingValidationIssue {
+  teamSlug: string;
+  issue:
+    | "missing-team"
+    | "rank-mismatch"
+    | "match-record-mismatch"
+    | "game-record-mismatch"
+    | "net-game-win-mismatch";
+  calculated: string | number | null;
+  reference: string | number | null;
+}
+
+export interface JourneySeason {
+  season: string;
+  champion: string;
+  runnerUp: string;
+  fmvp: string;
 }

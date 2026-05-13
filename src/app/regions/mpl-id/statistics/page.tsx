@@ -1,10 +1,13 @@
-import { mplIdStandings, mplIdTeams } from "@/data/mock/mpl-id";
+import { getMplIdTeams } from "@/services/regions/mpl-id";
+import type { Team } from "@/types/regions";
 
-function getTeamName(slug: string) {
-  return mplIdTeams.find((team) => team.slug === slug)?.name ?? slug;
+function getTeamName(teams: Team[], slug: string) {
+  return teams.find((team) => team.slug === slug)?.name ?? slug;
 }
 
-export default function MplIdStatisticsPage() {
+export default async function MplIdStatisticsPage() {
+  const data = await getMplIdTeams();
+
   return (
     <section className="rounded-[28px] border border-slate-200 bg-white p-5 shadow-soft sm:p-7">
       <h1 className="text-2xl font-black uppercase tracking-wide text-slate-950">
@@ -14,13 +17,13 @@ export default function MplIdStatisticsPage() {
         Team performance preview for MPL Indonesia mock data.
       </p>
       <div className="mt-6 grid gap-4 md:grid-cols-2">
-        {mplIdStandings.slice(0, 6).map((standing) => (
+        {data.currentStandings.slice(0, 6).map((standing) => (
           <article
             key={standing.teamSlug}
             className="rounded-2xl border border-slate-200 bg-slate-50 p-5"
           >
             <h2 className="font-bold text-slate-950">
-              {getTeamName(standing.teamSlug)}
+              {getTeamName(data.teams, standing.teamSlug)}
             </h2>
             <div className="mt-4 grid grid-cols-3 gap-3 text-sm">
               <div>

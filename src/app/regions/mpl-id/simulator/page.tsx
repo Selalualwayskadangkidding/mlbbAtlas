@@ -1,11 +1,21 @@
-import { mplIdMatchesByWeek, mplIdTeams } from "@/data/mock/mpl-id";
+import {
+  getMplIdSchedule,
+  getMplIdTeams
+} from "@/services/regions/mpl-id";
+import type { Team } from "@/types/regions";
 
-function getTeamName(slug: string) {
-  return mplIdTeams.find((team) => team.slug === slug)?.name ?? slug;
+function getTeamName(teams: Team[], slug: string) {
+  return teams.find((team) => team.slug === slug)?.name ?? slug;
 }
 
-export default function MplIdSimulatorPage() {
-  const futureMatches = mplIdMatchesByWeek[7].filter(
+export default async function MplIdSimulatorPage() {
+  const [scheduleData, teamsData] = await Promise.all([
+    getMplIdSchedule(),
+    getMplIdTeams()
+  ]);
+  const futureMatches = scheduleData.matchesByWeek[
+    scheduleData.currentWeek
+  ].filter(
     (match) => match.status !== "finished"
   );
 
@@ -29,7 +39,8 @@ export default function MplIdSimulatorPage() {
                 {match.date}, {match.time}
               </p>
               <h2 className="mt-2 text-xl font-bold text-slate-950">
-                {getTeamName(match.teamASlug)} vs {getTeamName(match.teamBSlug)}
+                {getTeamName(teamsData.teams, match.teamA)} vs{" "}
+                {getTeamName(teamsData.teams, match.teamB)}
               </h2>
               <div className="mt-4 grid grid-cols-2 gap-3">
                 <button className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-600">

@@ -1,6 +1,8 @@
 import { TeamsSection } from "@/components/regions/TeamsSection";
-import { mplIdStandings, mplIdTeams } from "@/data/mock/mpl-id";
+import { getMplIdTeams } from "@/services/regions/mpl-id";
 
-export default function MplIdTeamsPage() {
-  return <TeamsSection teams={mplIdTeams} standings={mplIdStandings} />;
+export default async function MplIdTeamsPage() {
+  const data = await getMplIdTeams();
+
+  return <TeamsSection teams={data.teams} standings={data.currentStandings} />;
 }

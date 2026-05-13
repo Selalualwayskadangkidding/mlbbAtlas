@@ -51,23 +51,23 @@ export function calculateStandings(teams: Team[], matches: Match[]): Standing[] 
     .filter(
       (match) =>
         match.status === "finished" &&
-        match.teamAScore !== null &&
-        match.teamBScore !== null
+        match.scoreA !== null &&
+        match.scoreB !== null
     )
     .forEach((match) => {
-      const teamA = accumulators.get(match.teamASlug);
-      const teamB = accumulators.get(match.teamBSlug);
+      const teamA = accumulators.get(match.teamA);
+      const teamB = accumulators.get(match.teamB);
 
-      if (!teamA || !teamB || match.teamAScore === null || match.teamBScore === null) {
+      if (!teamA || !teamB || match.scoreA === null || match.scoreB === null) {
         return;
       }
 
-      teamA.gameWins += match.teamAScore;
-      teamA.gameLosses += match.teamBScore;
-      teamB.gameWins += match.teamBScore;
-      teamB.gameLosses += match.teamAScore;
+      teamA.gameWins += match.scoreA;
+      teamA.gameLosses += match.scoreB;
+      teamB.gameWins += match.scoreB;
+      teamB.gameLosses += match.scoreA;
 
-      if (match.teamAScore > match.teamBScore) {
+      if (match.scoreA > match.scoreB) {
         teamA.matchWins += 1;
         teamB.matchLosses += 1;
         teamA.form.push("W");

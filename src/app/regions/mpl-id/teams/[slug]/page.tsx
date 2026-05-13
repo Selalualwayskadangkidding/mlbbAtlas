@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import { mplIdStandings, mplIdTeams } from "@/data/mock/mpl-id";
+import { getMplIdTeams } from "@/services/regions/mpl-id";
 
 interface TeamPageProps {
   params: {
@@ -10,14 +10,17 @@ interface TeamPageProps {
   };
 }
 
-export default function TeamPage({ params }: TeamPageProps) {
-  const team = mplIdTeams.find((item) => item.slug === params.slug);
+export default async function TeamPage({ params }: TeamPageProps) {
+  const data = await getMplIdTeams();
+  const team = data.teams.find((item) => item.slug === params.slug);
 
   if (!team) {
     notFound();
   }
 
-  const standing = mplIdStandings.find((item) => item.teamSlug === team.slug);
+  const standing = data.currentStandings.find(
+    (item) => item.teamSlug === team.slug
+  );
 
   return (
     <div className="flex w-full max-w-4xl flex-col gap-6">

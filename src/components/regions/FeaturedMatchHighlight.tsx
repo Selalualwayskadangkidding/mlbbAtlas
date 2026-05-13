@@ -20,7 +20,7 @@ function getTeam(teams: Team[], slug: string) {
 
 function formatScore(match: Match) {
   if (match.status === "finished") {
-    return `${match.teamAScore} - ${match.teamBScore}`;
+    return `${match.scoreA} - ${match.scoreB}`;
   }
 
   if (match.status === "live") {
@@ -38,8 +38,8 @@ export function FeaturedMatchHighlight({
     return null;
   }
 
-  const teamA = getTeam(teams, match.teamASlug);
-  const teamB = getTeam(teams, match.teamBSlug);
+  const teamA = getTeam(teams, match.teamA);
+  const teamB = getTeam(teams, match.teamB);
 
   return (
     <section className="rounded-[28px] border border-slate-200 bg-white p-5 shadow-soft sm:p-7">

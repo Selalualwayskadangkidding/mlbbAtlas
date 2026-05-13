@@ -1,20 +1,27 @@
 import { ScheduleDashboard } from "@/components/regions/ScheduleDashboard";
 import {
-  mplIdMatchesByWeek,
-  mplIdCurrentSeason,
-  mplIdStandings,
-  mplIdStandingsSnapshots,
-  mplIdTeams
-} from "@/data/mock/mpl-id";
+  getMplIdRegion,
+  getMplIdSchedule,
+  getMplIdStandings,
+  getMplIdTeams
+} from "@/services/regions/mpl-id";
 
-export default function MplIdSchedulePage() {
+export default async function MplIdSchedulePage() {
+  const [regionData, scheduleData, standingsData, teamsData] =
+    await Promise.all([
+      getMplIdRegion(),
+      getMplIdSchedule(),
+      getMplIdStandings(),
+      getMplIdTeams()
+    ]);
+
   return (
     <ScheduleDashboard
-      teams={mplIdTeams}
-      currentWeek={mplIdCurrentSeason.currentWeek}
-      currentStandings={mplIdStandings}
-      standingsSnapshots={mplIdStandingsSnapshots}
-      matchesByWeek={mplIdMatchesByWeek}
+      teams={teamsData.teams}
+      currentWeek={regionData.currentSeason.currentWeek}
+      currentStandings={standingsData.currentStandings}
+      standingsSnapshots={scheduleData.standingsSnapshots}
+      matchesByWeek={scheduleData.matchesByWeek}
     />
   );
 }

@@ -1,16 +1,20 @@
 import { CurrentStandings } from "@/components/regions/CurrentStandings";
+import { DataTransparencyNote } from "@/components/regions/DataTransparencyNote";
+import { DevValidationSummary } from "@/components/regions/DevValidationSummary";
 import { FeaturedMatchHighlight } from "@/components/regions/FeaturedMatchHighlight";
 import { RegionHero } from "@/components/regions/RegionHero";
 import {
-  mplIdMatchesByWeek,
-  mplIdCurrentSeason,
-  mplIdRegion,
-  mplIdStandings,
-  mplIdTeams
-} from "@/data/mock/mpl-id";
+  getMplIdApiMeta,
+  hasMplIdPartialData,
+  getMplIdRegion,
+  getMplIdSchedule,
+  getMplIdStandings,
+  getMplIdTeams
+} from "@/services/regions/mpl-id";
+import type { Team } from "@/types/regions";
 
-function getCompactTeamName(slug: string) {
-  const team = mplIdTeams.find((item) => item.slug === slug);
+function getCompactTeamName(teams: Team[], slug: string) {
+  const team = teams.find((item) => item.slug === slug);
 
   return (
     team?.name
@@ -22,38 +26,65 @@ function getCompactTeamName(slug: string) {
   );
 }
 
-export default function MplIdPage() {
-  const currentWeek = mplIdCurrentSeason.currentWeek;
-  const leaderStanding = mplIdStandings.find((standing) => standing.rank === 1);
-  const currentLeader = getCompactTeamName(leaderStanding?.teamSlug ?? "");
+export default async function MplIdPage() {
+  const [regionData, scheduleData, standingsData, teamsData, apiMeta] =
+    await Promise.all([
+      getMplIdRegion(),
+      getMplIdSchedule(),
+      getMplIdStandings(),
+      getMplIdTeams(),
+      getMplIdApiMeta()
+    ]);
+  const currentWeek = regionData.currentSeason.currentWeek;
+  const leaderStanding = standingsData.currentStandings.find(
+    (standing) => standing.rank === 1
+  );
+  const currentLeader = getCompactTeamName(
+    teamsData.teams,
+    leaderStanding?.teamSlug ?? ""
+  );
   const featuredMatch =
-    mplIdMatchesByWeek[currentWeek]?.find((match) => match.status === "live") ??
-    mplIdMatchesByWeek[currentWeek]?.find(
+    scheduleData.matchesByWeek[currentWeek]?.find(
+      (match) => match.status === "live"
+    ) ??
+    scheduleData.matchesByWeek[currentWeek]?.find(
       (match) => match.status === "upcoming"
     );
 
   return (
     <>
       <RegionHero
-        region={mplIdRegion}
-        season={mplIdCurrentSeason}
+        region={regionData.region}
+        season={regionData.currentSeason}
         currentLeader={currentLeader}
-        matchesPlayedLabel={`42/${mplIdCurrentSeason.totalMatches}`}
+        matchesPlayedLabel={`${
+          scheduleData.matches.filter((match) => match.status === "finished")
+            .length
+        }/${regionData.currentSeason.totalMatches}`}
         nextMatchLabel={
           featuredMatch
-            ? `${getCompactTeamName(featuredMatch.teamASlug)} vs ${getCompactTeamName(
-                featuredMatch.teamBSlug
+            ? `${getCompactTeamName(
+                teamsData.teams,
+                featuredMatch.teamA
+              )} vs ${getCompactTeamName(
+                teamsData.teams,
+                featuredMatch.teamB
               )}`
             : "TBD"
         }
       />
       <CurrentStandings
-        standings={mplIdStandings}
-        teams={mplIdTeams}
+        standings={standingsData.currentStandings}
+        teams={teamsData.teams}
         title="Current Standings"
-        description="Live MPL Indonesia table for the current mock season."
+        description="MPL Indonesia Season 17 table derived from finished match rows."
       />
-      <FeaturedMatchHighlight match={featuredMatch} teams={mplIdTeams} />
+      <DataTransparencyNote hasPartialData={hasMplIdPartialData()} />
+      <DevValidationSummary
+        validationIssues={standingsData.validationIssues.length}
+        sourceLabel={apiMeta.source}
+      />
+      <FeaturedMatchHighlight match={featuredMatch} teams={teamsData.teams} />
     </>
   );
 }
