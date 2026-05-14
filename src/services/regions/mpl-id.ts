@@ -3,12 +3,12 @@ import { mplIdSeason17Matches } from "@/data/mpl-id/matches";
 import { mplIdRegion } from "@/data/mpl-id/region";
 import { mplIdSeason17 } from "@/data/mpl-id/seasons";
 import { mplIdSeason17StandingsReference } from "@/data/mpl-id/standings-reference";
-import { mplIdSeason17VerifiedStandingsSnapshots } from "@/data/mpl-id/standings-snapshots";
 import { mplIdTeams } from "@/data/mpl-id/teams";
 import {
   calculateStandings,
   validateStandingsAgainstReference
 } from "@/lib/ranking";
+import { applyPlayoffStatuses } from "@/lib/playoffs";
 import type { ApiResponseMeta } from "@/types/api";
 import type {
   JourneySeason,
@@ -56,22 +56,43 @@ function getFinishedMatchesThroughWeek(weekNumber: number) {
   );
 }
 
+function getScenarioMatchesThroughWeek(weekNumber: number) {
+  return mplIdSeason17Matches.map((match) => {
+    if (match.week <= weekNumber) {
+      return match;
+    }
+
+    return {
+      ...match,
+      status: "upcoming" as const,
+      scoreA: null,
+      scoreB: null
+    };
+  });
+}
+
 function getStandingsSnapshots(): StandingsSnapshot[] {
-  return mplIdSeason17.weeks.map((week) => ({
-    week: week.weekNumber,
-    standings:
-      mplIdSeason17VerifiedStandingsSnapshots.find(
-        (snapshot) => snapshot.week === week.weekNumber
-      )?.standings ??
-      calculateStandings(
-        mplIdTeams,
-        getFinishedMatchesThroughWeek(week.weekNumber)
+  return mplIdSeason17.weeks.map((week) => {
+    const standings = calculateStandings(
+      mplIdTeams,
+      getFinishedMatchesThroughWeek(week.weekNumber)
+    );
+
+    return {
+      week: week.weekNumber,
+      standings: applyPlayoffStatuses(
+        standings,
+        getScenarioMatchesThroughWeek(week.weekNumber)
       )
-  }));
+    };
+  });
 }
 
 function getCurrentStandings() {
-  return calculateStandings(mplIdTeams, mplIdSeason17Matches);
+  return applyPlayoffStatuses(
+    calculateStandings(mplIdTeams, mplIdSeason17Matches),
+    mplIdSeason17Matches
+  );
 }
 
 function getMatchesByWeek() {

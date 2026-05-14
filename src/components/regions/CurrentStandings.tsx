@@ -11,16 +11,16 @@ interface CurrentStandingsProps {
 }
 
 const statusStyles: Record<StandingStatus, string> = {
-  "upper-bracket": "border-blue-300 bg-blue-50 text-blue-700",
+  "upper-bracket-secured": "border-blue-300 bg-blue-50 text-blue-700",
   "playoff-secured": "border-emerald-300 bg-emerald-50 text-emerald-700",
-  competing: "border-slate-300 bg-slate-100 text-slate-700",
+  "outside-playoff-zone": "border-slate-300 bg-slate-100 text-slate-700",
   eliminated: "border-red-300 bg-red-50 text-red-700"
 };
 
 const statusLabels: Record<StandingStatus, string> = {
-  "upper-bracket": "Upper Bracket",
+  "upper-bracket-secured": "Upper Bracket Secured",
   "playoff-secured": "Playoff Secured",
-  competing: "Still Competing",
+  "outside-playoff-zone": "Outside Playoff Zone",
   eliminated: "Eliminated"
 };
 
@@ -48,6 +48,11 @@ export function CurrentStandings({
             {title}
           </h2>
           <p className="mt-2 text-sm text-slate-500">{description}</p>
+          <p className="mt-2 text-xs text-slate-500">
+            Secured and eliminated statuses use a conservative max-points
+            check. Teams without a guaranteed outcome remain Outside Playoff
+            Zone.
+          </p>
         </div>
         <div className="flex flex-wrap gap-2 text-xs">
           {Object.entries(statusLabels).map(([status, label]) => (

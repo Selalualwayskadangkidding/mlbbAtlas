@@ -10,15 +10,10 @@ interface SnapshotSeed {
 }
 
 function getSnapshotStatus(rank: number): StandingStatus {
-  if (rank <= 2) {
-    return "upper-bracket";
-  }
-
-  if (rank <= 6) {
-    return "playoff-secured";
-  }
-
-  return "eliminated";
+  // TODO: Replace positioning-only statuses with scenario-aware playoff status
+  // once mathematical elimination, clinched playoff, clinched upper bracket,
+  // remaining matches, tie breakers, and net game differential are modeled.
+  return "outside-playoff-zone";
 }
 
 function formatRecord(wins: number, losses: number) {
@@ -127,4 +122,3 @@ export const mplIdSeason17VerifiedStandingsSnapshots = [
     { rank: 9, teamSlug: "rrq-hoshi", matchWins: 1, matchLosses: 11, gameWins: 5, gameLosses: 22 }
   ])
 ];
-

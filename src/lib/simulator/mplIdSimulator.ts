@@ -1,4 +1,5 @@
 import { calculateStandings } from "@/lib/ranking";
+import { applyPlayoffStatuses } from "@/lib/playoffs";
 import type { Match, Standing, Team } from "@/types/regions";
 
 export type SimulatedResultOption =
@@ -87,7 +88,12 @@ export function calculateSimulatedStandings(
   matches: Match[],
   results: SimulatedMatchResult[]
 ): Standing[] {
-  return calculateStandings(teams, applySimulatedResults(matches, results));
+  const simulatedMatches = applySimulatedResults(matches, results);
+
+  return applyPlayoffStatuses(
+    calculateStandings(teams, simulatedMatches),
+    simulatedMatches
+  );
 }
 
 export function calculateRankMovement(

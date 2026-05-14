@@ -8,6 +8,7 @@ import {
   calculateRankMovement,
   calculateSimulatedStandings
 } from "@/lib/simulator";
+import { getStandingStatusColor } from "@/lib/playoffs";
 import { cn } from "@/lib/utils/cn";
 import type {
   RankMovement,
@@ -92,6 +93,13 @@ function getMovementClass(movement: RankMovement) {
   return "border-slate-200 bg-slate-50 text-slate-500";
 }
 
+const statusLabels: Record<Standing["status"], string> = {
+  "upper-bracket-secured": "Upper Bracket Secured",
+  "playoff-secured": "Playoff Secured",
+  "outside-playoff-zone": "Outside Playoff Zone",
+  eliminated: "Eliminated"
+};
+
 function formatScore(match: Match) {
   if (match.scoreA === null || match.scoreB === null) {
     return "vs";
@@ -100,11 +108,26 @@ function formatScore(match: Match) {
   return `${match.scoreA} - ${match.scoreB}`;
 }
 
+function getMatchDayLabel(match: Match) {
+  return match.date.match(/Day \d+/)?.[0] ?? match.date;
+}
+
 function getMatchesByWeek(matches: Match[]) {
   return matches.reduce<Record<number, Match[]>>((weeks, match) => {
     return {
       ...weeks,
       [match.week]: [...(weeks[match.week] ?? []), match]
+    };
+  }, {});
+}
+
+function getMatchesByDay(matches: Match[]) {
+  return matches.reduce<Record<string, Match[]>>((days, match) => {
+    const dayLabel = getMatchDayLabel(match);
+
+    return {
+      ...days,
+      [dayLabel]: [...(days[dayLabel] ?? []), match]
     };
   }, {});
 }
@@ -269,10 +292,14 @@ function SimulatedStandingsTable({
         <p className="mt-2 text-sm text-slate-500">
           Table recalculated from every selected simulated result.
         </p>
+        <p className="mt-2 text-xs text-slate-500">
+          Simulator status is based on current standings, selected simulated
+          result, and remaining matches.
+        </p>
       </div>
 
       <div className="overflow-x-auto">
-        <table className="w-full min-w-[840px] border-separate border-spacing-0 text-left">
+        <table className="w-full min-w-[980px] border-separate border-spacing-0 text-left">
           <thead>
             <tr className="text-xs uppercase tracking-[0.16em] text-slate-500">
               <th className="border-b border-slate-200 pb-3 pr-4">Rank</th>
@@ -287,7 +314,8 @@ function SimulatedStandingsTable({
               <th className="border-b border-slate-200 pb-3 pr-4">
                 Net Game Win
               </th>
-              <th className="border-b border-slate-200 pb-3">Points</th>
+              <th className="border-b border-slate-200 pb-3 pr-4">Points</th>
+              <th className="border-b border-slate-200 pb-3">Status</th>
             </tr>
           </thead>
           <tbody>
@@ -341,6 +369,16 @@ function SimulatedStandingsTable({
                   </td>
                   <td className="border-b border-slate-200 py-4 font-medium text-slate-700">
                     {standing.matchPoints}
+                  </td>
+                  <td className="border-b border-slate-200 py-4">
+                    <span
+                      className={cn(
+                        "inline-flex rounded-full border px-3 py-1 text-xs font-medium",
+                        getStandingStatusColor(standing.status)
+                      )}
+                    >
+                      {statusLabels[standing.status]}
+                    </span>
                   </td>
                 </tr>
               );
@@ -584,7 +622,14 @@ export function MplIdSimulatorDashboard({
   const finalRegularSeasonWeek = availableWeeks[availableWeeks.length - 1];
   const selectedWeek =
     typeof selectedStage === "number" ? selectedStage : currentWeek;
-  const selectedWeekMatches = matchesByWeek[selectedWeek] ?? [];
+  const selectedWeekMatches = useMemo(
+    () => matchesByWeek[selectedWeek] ?? [],
+    [matchesByWeek, selectedWeek]
+  );
+  const selectedWeekMatchesByDay = useMemo(
+    () => getMatchesByDay(selectedWeekMatches),
+    [selectedWeekMatches]
+  );
   const simulatedResults = useMemo(
     () =>
       Object.entries(selectedResults).map(([matchId, result]) => ({
@@ -713,68 +758,82 @@ export function MplIdSimulatorDashboard({
 
         {!isPlayoffStage ? (
           <>
-            <div className="mt-7 grid gap-4">
-              {selectedWeekMatches.map((match) => {
-                const teamA = getTeam(teams, match.teamA);
-                const teamB = getTeam(teams, match.teamB);
-                const canSimulate = match.week >= currentWeek;
-
-                if (!canSimulate) {
-                  return (
-                    <MatchResultCard
-                      key={match.id}
-                      match={match}
-                      teams={teams}
-                    />
-                  );
-                }
-
-                return (
-                  <article
-                    key={match.id}
-                    className="rounded-2xl border border-slate-200 bg-white p-4"
-                  >
-                    <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
-                      {match.format} - {match.date} - {match.time}
-                    </p>
-                    <div className="mt-3">
-                      <VersusBanner
-                        teamA={teamA}
-                        teamB={teamB}
-                        centerText="VS"
-                      />
+            <div className="mt-7 space-y-6">
+              {Object.entries(selectedWeekMatchesByDay).map(
+                ([dayLabel, dayMatches]) => (
+                  <div key={dayLabel}>
+                    <div className="mb-3 flex items-center gap-3">
+                      <h2 className="text-sm font-black uppercase tracking-[0.18em] text-slate-700">
+                        {dayLabel}
+                      </h2>
+                      <span className="h-px flex-1 bg-slate-200" />
                     </div>
+                    <div className="grid gap-4">
+                      {dayMatches.map((match) => {
+                        const teamA = getTeam(teams, match.teamA);
+                        const teamB = getTeam(teams, match.teamB);
+                        const canSimulate = match.week >= currentWeek;
 
-                    <div className="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
-                      {resultOptions.map((option) => {
-                        const isSelected =
-                          selectedResults[match.id] === option;
+                        if (!canSimulate) {
+                          return (
+                            <MatchResultCard
+                              key={match.id}
+                              match={match}
+                              teams={teams}
+                            />
+                          );
+                        }
 
                         return (
-                          <button
-                            key={option}
-                            type="button"
-                            onClick={() =>
-                              setSelectedResults((currentResults) => ({
-                                ...currentResults,
-                                [match.id]: option
-                              }))
-                            }
-                            className={cn(
-                              "rounded-xl border px-4 py-3 text-sm font-bold transition",
-                              isSelected
-                                ? "border-atlas-accent bg-atlas-accent text-white"
-                                : "border-slate-200 bg-white text-slate-700 hover:border-atlas-accent hover:text-slate-950"
-                            )}
+                          <article
+                            key={match.id}
+                            className="rounded-2xl border border-slate-200 bg-white p-4"
                           >
-                            {getResultLabel(option, teamA, teamB)}
-                          </button>
+                            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
+                              {match.format} - {match.time}
+                            </p>
+                            <div className="mt-3">
+                              <VersusBanner
+                                teamA={teamA}
+                                teamB={teamB}
+                                centerText="VS"
+                              />
+                            </div>
+
+                            <div className="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
+                              {resultOptions.map((option) => {
+                                const isSelected =
+                                  selectedResults[match.id] === option;
+
+                                return (
+                                  <button
+                                    key={option}
+                                    type="button"
+                                    onClick={() =>
+                                      setSelectedResults((currentResults) => ({
+                                        ...currentResults,
+                                        [match.id]: option
+                                      }))
+                                    }
+                                    className={cn(
+                                      "rounded-xl border px-4 py-3 text-sm font-bold transition",
+                                      isSelected
+                                        ? "border-atlas-accent bg-atlas-accent text-white"
+                                        : "border-slate-200 bg-white text-slate-700 hover:border-atlas-accent hover:text-slate-950"
+                                    )}
+                                  >
+                                    {getResultLabel(option, teamA, teamB)}
+                                  </button>
+                                );
+                              })}
+                            </div>
+                          </article>
                         );
                       })}
                     </div>
-                  </article>
-                );
-              })}
+                  </div>
+                )
+              )}
             </div>
 
             {selectedWeek < currentWeek ? (

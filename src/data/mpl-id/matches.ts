@@ -3,69 +3,72 @@ import type { Match } from "@/types/regions";
 
 export const MPL_ID_SEASON_17_ID = "mpl-id-s17";
 
-interface FinishedResultSeed {
-  winner: string;
-  loser: string;
-  score: "2-0" | "2-1";
+interface FinishedMatchSeed {
+  week: number;
+  day: number;
+  teamA: string;
+  teamB: string;
+  scoreA: number;
+  scoreB: number;
 }
 
-const finishedResultSeeds: FinishedResultSeed[] = [
-  { winner: "geek-fam", loser: "bigetron-vitality", score: "2-0" },
-  { winner: "bigetron-vitality", loser: "evos", score: "2-1" },
-  { winner: "team-liquid-id", loser: "rrq-hoshi", score: "2-0" },
-  { winner: "bigetron-vitality", loser: "geek-fam", score: "2-1" },
-  { winner: "onic", loser: "team-liquid-id", score: "2-0" },
-  { winner: "onic", loser: "rrq-hoshi", score: "2-0" },
-  { winner: "dewa-united", loser: "alter-ego", score: "2-0" },
-  { winner: "navi", loser: "alter-ego", score: "2-1" },
-  { winner: "onic", loser: "evos", score: "2-0" },
-  { winner: "dewa-united", loser: "onic", score: "2-1" },
-  { winner: "navi", loser: "alter-ego", score: "2-1" },
-  { winner: "bigetron-vitality", loser: "dewa-united", score: "2-1" },
-  { winner: "dewa-united", loser: "geek-fam", score: "2-0" },
-  { winner: "alter-ego", loser: "rrq-hoshi", score: "2-1" },
-  { winner: "geek-fam", loser: "rrq-hoshi", score: "2-0" },
-  { winner: "dewa-united", loser: "rrq-hoshi", score: "2-0" },
-  { winner: "alter-ego", loser: "rrq-hoshi", score: "2-1" },
-  { winner: "team-liquid-id", loser: "evos", score: "2-0" },
-  { winner: "evos", loser: "team-liquid-id", score: "2-0" },
-  { winner: "geek-fam", loser: "dewa-united", score: "2-0" },
-  { winner: "dewa-united", loser: "team-liquid-id", score: "2-0" },
-  { winner: "alter-ego", loser: "geek-fam", score: "2-1" },
-  { winner: "dewa-united", loser: "navi", score: "2-1" },
-  { winner: "evos", loser: "navi", score: "2-0" },
-  { winner: "bigetron-vitality", loser: "team-liquid-id", score: "2-1" },
-  { winner: "bigetron-vitality", loser: "rrq-hoshi", score: "2-0" },
-  { winner: "geek-fam", loser: "navi", score: "2-1" },
-  { winner: "evos", loser: "navi", score: "2-0" },
-  { winner: "onic", loser: "bigetron-vitality", score: "2-0" },
-  { winner: "team-liquid-id", loser: "evos", score: "2-0" },
-  { winner: "navi", loser: "rrq-hoshi", score: "2-0" },
-  { winner: "onic", loser: "team-liquid-id", score: "2-0" },
-  { winner: "alter-ego", loser: "navi", score: "2-1" },
-  { winner: "team-liquid-id", loser: "dewa-united", score: "2-1" },
-  { winner: "alter-ego", loser: "navi", score: "2-1" },
-  { winner: "alter-ego", loser: "evos", score: "2-1" },
-  { winner: "onic", loser: "rrq-hoshi", score: "2-0" },
-  { winner: "geek-fam", loser: "bigetron-vitality", score: "2-1" },
-  { winner: "onic", loser: "bigetron-vitality", score: "2-0" },
-  { winner: "team-liquid-id", loser: "geek-fam", score: "2-1" },
-  { winner: "alter-ego", loser: "onic", score: "2-1" },
-  { winner: "bigetron-vitality", loser: "navi", score: "2-1" },
-  { winner: "evos", loser: "rrq-hoshi", score: "2-0" },
-  { winner: "onic", loser: "team-liquid-id", score: "2-0" },
-  { winner: "evos", loser: "bigetron-vitality", score: "2-0" },
-  { winner: "team-liquid-id", loser: "alter-ego", score: "2-1" },
-  { winner: "rrq-hoshi", loser: "alter-ego", score: "2-0" },
-  { winner: "navi", loser: "evos", score: "2-0" },
-  { winner: "team-liquid-id", loser: "dewa-united", score: "2-1" },
-  { winner: "dewa-united", loser: "geek-fam", score: "2-0" },
-  { winner: "evos", loser: "geek-fam", score: "2-0" },
-  { winner: "onic", loser: "navi", score: "2-0" },
-  { winner: "dewa-united", loser: "geek-fam", score: "2-0" },
-  { winner: "geek-fam", loser: "navi", score: "2-0" },
-  { winner: "evos", loser: "rrq-hoshi", score: "2-1" },
-  { winner: "onic", loser: "bigetron-vitality", score: "2-1" }
+const finishedMatchSeeds: FinishedMatchSeed[] = [
+  { week: 1, day: 1, teamA: "bigetron-vitality", scoreA: 2, scoreB: 1, teamB: "alter-ego" },
+  { week: 1, day: 1, teamA: "navi", scoreA: 2, scoreB: 0, teamB: "rrq-hoshi" },
+  { week: 1, day: 2, teamA: "evos", scoreA: 2, scoreB: 0, teamB: "geek-fam" },
+  { week: 1, day: 2, teamA: "alter-ego", scoreA: 0, scoreB: 2, teamB: "onic" },
+  { week: 1, day: 2, teamA: "team-liquid-id", scoreA: 2, scoreB: 1, teamB: "navi" },
+  { week: 1, day: 3, teamA: "dewa-united", scoreA: 2, scoreB: 0, teamB: "bigetron-vitality" },
+  { week: 1, day: 3, teamA: "evos", scoreA: 0, scoreB: 2, teamB: "team-liquid-id" },
+  { week: 1, day: 3, teamA: "rrq-hoshi", scoreA: 0, scoreB: 2, teamB: "onic" },
+  { week: 2, day: 1, teamA: "onic", scoreA: 2, scoreB: 0, teamB: "geek-fam" },
+  { week: 2, day: 1, teamA: "dewa-united", scoreA: 2, scoreB: 0, teamB: "navi" },
+  { week: 2, day: 2, teamA: "geek-fam", scoreA: 2, scoreB: 0, teamB: "bigetron-vitality" },
+  { week: 2, day: 2, teamA: "alter-ego", scoreA: 2, scoreB: 1, teamB: "evos" },
+  { week: 2, day: 2, teamA: "team-liquid-id", scoreA: 2, scoreB: 1, teamB: "dewa-united" },
+  { week: 2, day: 3, teamA: "navi", scoreA: 1, scoreB: 2, teamB: "alter-ego" },
+  { week: 2, day: 3, teamA: "rrq-hoshi", scoreA: 0, scoreB: 2, teamB: "team-liquid-id" },
+  { week: 2, day: 3, teamA: "bigetron-vitality", scoreA: 2, scoreB: 1, teamB: "evos" },
+  { week: 3, day: 1, teamA: "onic", scoreA: 2, scoreB: 1, teamB: "dewa-united" },
+  { week: 3, day: 1, teamA: "navi", scoreA: 0, scoreB: 2, teamB: "evos" },
+  { week: 3, day: 2, teamA: "team-liquid-id", scoreA: 0, scoreB: 2, teamB: "geek-fam" },
+  { week: 3, day: 2, teamA: "onic", scoreA: 1, scoreB: 2, teamB: "bigetron-vitality" },
+  { week: 3, day: 2, teamA: "rrq-hoshi", scoreA: 1, scoreB: 2, teamB: "alter-ego" },
+  { week: 3, day: 3, teamA: "bigetron-vitality", scoreA: 1, scoreB: 2, teamB: "navi" },
+  { week: 3, day: 3, teamA: "geek-fam", scoreA: 2, scoreB: 1, teamB: "rrq-hoshi" },
+  { week: 3, day: 3, teamA: "alter-ego", scoreA: 0, scoreB: 2, teamB: "dewa-united" },
+  { week: 4, day: 1, teamA: "navi", scoreA: 0, scoreB: 2, teamB: "onic" },
+  { week: 4, day: 1, teamA: "evos", scoreA: 2, scoreB: 0, teamB: "dewa-united" },
+  { week: 4, day: 2, teamA: "team-liquid-id", scoreA: 1, scoreB: 2, teamB: "bigetron-vitality" },
+  { week: 4, day: 2, teamA: "rrq-hoshi", scoreA: 0, scoreB: 2, teamB: "evos" },
+  { week: 4, day: 2, teamA: "geek-fam", scoreA: 1, scoreB: 2, teamB: "alter-ego" },
+  { week: 4, day: 3, teamA: "onic", scoreA: 2, scoreB: 0, teamB: "team-liquid-id" },
+  { week: 4, day: 3, teamA: "bigetron-vitality", scoreA: 2, scoreB: 1, teamB: "rrq-hoshi" },
+  { week: 4, day: 3, teamA: "dewa-united", scoreA: 2, scoreB: 0, teamB: "geek-fam" },
+  { week: 5, day: 1, teamA: "geek-fam", scoreA: 0, scoreB: 2, teamB: "navi" },
+  { week: 5, day: 1, teamA: "evos", scoreA: 0, scoreB: 2, teamB: "onic" },
+  { week: 5, day: 2, teamA: "dewa-united", scoreA: 2, scoreB: 0, teamB: "rrq-hoshi" },
+  { week: 5, day: 2, teamA: "alter-ego", scoreA: 1, scoreB: 2, teamB: "team-liquid-id" },
+  { week: 5, day: 2, teamA: "evos", scoreA: 0, scoreB: 2, teamB: "bigetron-vitality" },
+  { week: 5, day: 3, teamA: "alter-ego", scoreA: 2, scoreB: 1, teamB: "navi" },
+  { week: 5, day: 3, teamA: "geek-fam", scoreA: 2, scoreB: 1, teamB: "onic" },
+  { week: 5, day: 3, teamA: "dewa-united", scoreA: 2, scoreB: 0, teamB: "team-liquid-id" },
+  { week: 6, day: 1, teamA: "navi", scoreA: 1, scoreB: 2, teamB: "dewa-united" },
+  { week: 6, day: 1, teamA: "alter-ego", scoreA: 2, scoreB: 1, teamB: "geek-fam" },
+  { week: 6, day: 2, teamA: "evos", scoreA: 2, scoreB: 1, teamB: "alter-ego" },
+  { week: 6, day: 2, teamA: "team-liquid-id", scoreA: 0, scoreB: 2, teamB: "onic" },
+  { week: 6, day: 2, teamA: "rrq-hoshi", scoreA: 2, scoreB: 0, teamB: "bigetron-vitality" },
+  { week: 6, day: 3, teamA: "navi", scoreA: 1, scoreB: 2, teamB: "team-liquid-id" },
+  { week: 6, day: 3, teamA: "onic", scoreA: 2, scoreB: 0, teamB: "rrq-hoshi" },
+  { week: 6, day: 3, teamA: "geek-fam", scoreA: 2, scoreB: 0, teamB: "evos" },
+  { week: 7, day: 1, teamA: "geek-fam", scoreA: 1, scoreB: 2, teamB: "dewa-united" },
+  { week: 7, day: 1, teamA: "bigetron-vitality", scoreA: 0, scoreB: 2, teamB: "team-liquid-id" },
+  { week: 7, day: 2, teamA: "dewa-united", scoreA: 1, scoreB: 2, teamB: "alter-ego" },
+  { week: 7, day: 2, teamA: "evos", scoreA: 2, scoreB: 0, teamB: "rrq-hoshi" },
+  { week: 7, day: 2, teamA: "onic", scoreA: 2, scoreB: 0, teamB: "navi" },
+  { week: 7, day: 3, teamA: "rrq-hoshi", scoreA: 0, scoreB: 2, teamB: "geek-fam" },
+  { week: 7, day: 3, teamA: "navi", scoreA: 2, scoreB: 1, teamB: "bigetron-vitality" },
+  { week: 7, day: 3, teamA: "team-liquid-id", scoreA: 0, scoreB: 2, teamB: "evos" }
 ];
 
 const upcomingMatches: Match[] = [
@@ -74,7 +77,7 @@ const upcomingMatches: Match[] = [
     seasonId: MPL_ID_SEASON_17_ID,
     regionSlug: MPL_ID_REGION_SLUG,
     week: 8,
-    date: "Friday, 15 May 2026",
+    date: "Week 8 Day 1",
     time: "15:15",
     teamA: "bigetron-vitality",
     teamB: "geek-fam",
@@ -89,7 +92,7 @@ const upcomingMatches: Match[] = [
     seasonId: MPL_ID_SEASON_17_ID,
     regionSlug: MPL_ID_REGION_SLUG,
     week: 8,
-    date: "Friday, 15 May 2026",
+    date: "Week 8 Day 1",
     time: "18:15",
     teamA: "dewa-united",
     teamB: "onic",
@@ -104,7 +107,7 @@ const upcomingMatches: Match[] = [
     seasonId: MPL_ID_SEASON_17_ID,
     regionSlug: MPL_ID_REGION_SLUG,
     week: 8,
-    date: "Saturday, 16 May 2026",
+    date: "Week 8 Day 2",
     time: "14:15",
     teamA: "evos",
     teamB: "navi",
@@ -119,7 +122,7 @@ const upcomingMatches: Match[] = [
     seasonId: MPL_ID_SEASON_17_ID,
     regionSlug: MPL_ID_REGION_SLUG,
     week: 8,
-    date: "Saturday, 16 May 2026",
+    date: "Week 8 Day 2",
     time: "17:15",
     teamA: "team-liquid-id",
     teamB: "rrq-hoshi",
@@ -134,7 +137,7 @@ const upcomingMatches: Match[] = [
     seasonId: MPL_ID_SEASON_17_ID,
     regionSlug: MPL_ID_REGION_SLUG,
     week: 8,
-    date: "Saturday, 16 May 2026",
+    date: "Week 8 Day 2",
     time: "20:15",
     teamA: "onic",
     teamB: "alter-ego",
@@ -149,7 +152,7 @@ const upcomingMatches: Match[] = [
     seasonId: MPL_ID_SEASON_17_ID,
     regionSlug: MPL_ID_REGION_SLUG,
     week: 8,
-    date: "Sunday, 17 May 2026",
+    date: "Week 8 Day 3",
     time: "14:15",
     teamA: "dewa-united",
     teamB: "evos",
@@ -164,7 +167,7 @@ const upcomingMatches: Match[] = [
     seasonId: MPL_ID_SEASON_17_ID,
     regionSlug: MPL_ID_REGION_SLUG,
     week: 8,
-    date: "Sunday, 17 May 2026",
+    date: "Week 8 Day 3",
     time: "17:15",
     teamA: "alter-ego",
     teamB: "bigetron-vitality",
@@ -179,7 +182,7 @@ const upcomingMatches: Match[] = [
     seasonId: MPL_ID_SEASON_17_ID,
     regionSlug: MPL_ID_REGION_SLUG,
     week: 8,
-    date: "Sunday, 17 May 2026",
+    date: "Week 8 Day 3",
     time: "20:15",
     teamA: "rrq-hoshi",
     teamB: "navi",
@@ -194,7 +197,7 @@ const upcomingMatches: Match[] = [
     seasonId: MPL_ID_SEASON_17_ID,
     regionSlug: MPL_ID_REGION_SLUG,
     week: 9,
-    date: "Friday, 22 May 2026",
+    date: "Week 9 Day 1",
     time: "15:15",
     teamA: "bigetron-vitality",
     teamB: "dewa-united",
@@ -209,7 +212,7 @@ const upcomingMatches: Match[] = [
     seasonId: MPL_ID_SEASON_17_ID,
     regionSlug: MPL_ID_REGION_SLUG,
     week: 9,
-    date: "Friday, 22 May 2026",
+    date: "Week 9 Day 1",
     time: "18:15",
     teamA: "team-liquid-id",
     teamB: "alter-ego",
@@ -224,7 +227,7 @@ const upcomingMatches: Match[] = [
     seasonId: MPL_ID_SEASON_17_ID,
     regionSlug: MPL_ID_REGION_SLUG,
     week: 9,
-    date: "Saturday, 23 May 2026",
+    date: "Week 9 Day 2",
     time: "14:15",
     teamA: "geek-fam",
     teamB: "team-liquid-id",
@@ -239,7 +242,7 @@ const upcomingMatches: Match[] = [
     seasonId: MPL_ID_SEASON_17_ID,
     regionSlug: MPL_ID_REGION_SLUG,
     week: 9,
-    date: "Saturday, 23 May 2026",
+    date: "Week 9 Day 2",
     time: "17:15",
     teamA: "alter-ego",
     teamB: "rrq-hoshi",
@@ -254,7 +257,7 @@ const upcomingMatches: Match[] = [
     seasonId: MPL_ID_SEASON_17_ID,
     regionSlug: MPL_ID_REGION_SLUG,
     week: 9,
-    date: "Saturday, 23 May 2026",
+    date: "Week 9 Day 2",
     time: "20:15",
     teamA: "bigetron-vitality",
     teamB: "onic",
@@ -269,7 +272,7 @@ const upcomingMatches: Match[] = [
     seasonId: MPL_ID_SEASON_17_ID,
     regionSlug: MPL_ID_REGION_SLUG,
     week: 9,
-    date: "Sunday, 24 May 2026",
+    date: "Week 9 Day 3",
     time: "14:15",
     teamA: "rrq-hoshi",
     teamB: "dewa-united",
@@ -284,7 +287,7 @@ const upcomingMatches: Match[] = [
     seasonId: MPL_ID_SEASON_17_ID,
     regionSlug: MPL_ID_REGION_SLUG,
     week: 9,
-    date: "Sunday, 24 May 2026",
+    date: "Week 9 Day 3",
     time: "17:15",
     teamA: "onic",
     teamB: "evos",
@@ -299,7 +302,7 @@ const upcomingMatches: Match[] = [
     seasonId: MPL_ID_SEASON_17_ID,
     regionSlug: MPL_ID_REGION_SLUG,
     week: 9,
-    date: "Sunday, 24 May 2026",
+    date: "Week 9 Day 3",
     time: "20:15",
     teamA: "navi",
     teamB: "geek-fam",
@@ -311,42 +314,27 @@ const upcomingMatches: Match[] = [
   }
 ];
 
-function getSeedDate(index: number) {
-  const week = Math.floor(index / 8) + 1;
-  const day = index % 8;
-  const dayName = day < 2 ? "Friday" : day < 5 ? "Saturday" : "Sunday";
-
-  return {
-    week,
-    date: `${dayName}, Week ${week}`,
-    time: ["15:00", "18:15", "20:30"][day % 3]
-  };
-}
-
-function createFinishedMatch(seed: FinishedResultSeed, index: number): Match {
-  const schedule = getSeedDate(index);
-  const [scoreA, scoreB] = seed.score.split("-").map(Number);
-
+function createFinishedMatch(seed: FinishedMatchSeed, index: number): Match {
   return {
     id: `mpl-id-s17-finished-${index + 1}`,
     seasonId: MPL_ID_SEASON_17_ID,
     regionSlug: MPL_ID_REGION_SLUG,
-    week: schedule.week,
-    date: schedule.date,
-    time: schedule.time,
-    teamA: seed.winner,
-    teamB: seed.loser,
-    scoreA,
-    scoreB,
+    week: seed.week,
+    date: `Week ${seed.week} Day ${seed.day}`,
+    time: "Verified Result",
+    teamA: seed.teamA,
+    teamB: seed.teamB,
+    scoreA: seed.scoreA,
+    scoreB: seed.scoreB,
     status: "finished",
     format: "BO3",
-    verifiedDataStatus: "partial"
+    verifiedDataStatus: "verified"
   };
 }
 
 // TODO: Future admin panel should update matches, not standings directly.
 // Standings remain derived from match results; manual standings override should be emergency-only.
 export const mplIdSeason17Matches: Match[] = [
-  ...finishedResultSeeds.map(createFinishedMatch),
+  ...finishedMatchSeeds.map(createFinishedMatch),
   ...upcomingMatches
 ];

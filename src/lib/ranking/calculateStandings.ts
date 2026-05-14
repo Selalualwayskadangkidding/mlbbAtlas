@@ -21,19 +21,11 @@ function createInitialAccumulator(teamSlug: string): TeamStandingAccumulator {
 }
 
 function getStandingStatus(rank: number, totalTeams: number): StandingStatus {
-  if (rank <= 2) {
-    return "upper-bracket";
-  }
-
-  if (rank <= 6) {
-    return "playoff-secured";
-  }
-
-  if (rank > 6) {
-    return "eliminated";
-  }
-
-  return "competing";
+  // Ranking engine stays playoff-agnostic. Final qualification status is
+  // applied by src/lib/playoffs using remaining matches and max-points checks.
+  void rank;
+  void totalTeams;
+  return "outside-playoff-zone";
 }
 
 function formatRecord(wins: number, losses: number) {

@@ -1,7 +1,7 @@
 export type StandingStatus =
-  | "upper-bracket"
+  | "upper-bracket-secured"
   | "playoff-secured"
-  | "competing"
+  | "outside-playoff-zone"
   | "eliminated";
 
 export type MatchStatus = "finished" | "live" | "upcoming";
