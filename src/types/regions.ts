@@ -73,6 +73,7 @@ export interface Match {
   date: string;
   time: string;
   verifiedDataStatus: VerifiedDataStatus;
+  isSimulated?: boolean;
 }
 
 export interface StandingsSnapshot {

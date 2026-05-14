@@ -25,11 +25,11 @@ function getStandingStatus(rank: number, totalTeams: number): StandingStatus {
     return "upper-bracket";
   }
 
-  if (rank <= 4) {
+  if (rank <= 6) {
     return "playoff-secured";
   }
 
-  if (rank >= totalTeams - 1) {
+  if (rank > 6) {
     return "eliminated";
   }
 

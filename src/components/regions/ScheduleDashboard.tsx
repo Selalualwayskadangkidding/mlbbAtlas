@@ -84,7 +84,7 @@ export function ScheduleDashboard({
 
         <div className="relative overflow-x-auto pb-2">
           <div className="absolute left-8 right-8 top-[50px] h-px bg-slate-200" />
-          <div className="relative grid min-w-[760px] grid-cols-7 gap-4">
+          <div className="relative grid min-w-[960px] grid-cols-9 gap-4">
             {availableWeeks.map((week) => {
               const isSelected = selectedWeek === week;
               const isCurrent = week === currentWeek;

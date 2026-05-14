@@ -3,6 +3,7 @@ import { mplIdSeason17Matches } from "@/data/mpl-id/matches";
 import { mplIdRegion } from "@/data/mpl-id/region";
 import { mplIdSeason17 } from "@/data/mpl-id/seasons";
 import { mplIdSeason17StandingsReference } from "@/data/mpl-id/standings-reference";
+import { mplIdSeason17VerifiedStandingsSnapshots } from "@/data/mpl-id/standings-snapshots";
 import { mplIdTeams } from "@/data/mpl-id/teams";
 import {
   calculateStandings,
@@ -58,10 +59,14 @@ function getFinishedMatchesThroughWeek(weekNumber: number) {
 function getStandingsSnapshots(): StandingsSnapshot[] {
   return mplIdSeason17.weeks.map((week) => ({
     week: week.weekNumber,
-    standings: calculateStandings(
-      mplIdTeams,
-      getFinishedMatchesThroughWeek(week.weekNumber)
-    )
+    standings:
+      mplIdSeason17VerifiedStandingsSnapshots.find(
+        (snapshot) => snapshot.week === week.weekNumber
+      )?.standings ??
+      calculateStandings(
+        mplIdTeams,
+        getFinishedMatchesThroughWeek(week.weekNumber)
+      )
   }));
 }
 
