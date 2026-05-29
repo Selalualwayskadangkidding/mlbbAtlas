@@ -1,9 +1,9 @@
 import { mplIdJourney } from "@/data/mpl-id/journey";
-import { mplIdSeason17Matches } from "@/data/mpl-id/matches";
 import { mplIdRegion } from "@/data/mpl-id/region";
 import { mplIdSeason17 } from "@/data/mpl-id/seasons";
 import { mplIdSeason17StandingsReference } from "@/data/mpl-id/standings-reference";
 import { mplIdTeams } from "@/data/mpl-id/teams";
+import { getAdminMatches } from "@/services/admin/matches";
 import {
   calculateStandings,
   validateStandingsAgainstReference
@@ -21,7 +21,7 @@ import type {
   Team
 } from "@/types/regions";
 
-const SOURCE_LABEL = "internal-verified-data";
+type MplIdMatchSource = "supabase" | "local-fallback";
 
 export interface MplIdRegionData {
   region: Region;
@@ -32,6 +32,7 @@ export interface MplIdStandingsData {
   currentStandings: Standing[];
   snapshots: StandingsSnapshot[];
   validationIssues: StandingValidationIssue[];
+  source: MplIdMatchSource;
 }
 
 export interface MplIdScheduleData {
@@ -39,25 +40,31 @@ export interface MplIdScheduleData {
   matches: Match[];
   matchesByWeek: Record<number, Match[]>;
   standingsSnapshots: StandingsSnapshot[];
+  source: MplIdMatchSource;
 }
 
 export interface MplIdTeamsData {
   teams: Team[];
   currentStandings: Standing[];
+  source: MplIdMatchSource;
 }
 
 export interface MplIdJourneyData {
   seasons: JourneySeason[];
 }
 
-function getFinishedMatchesThroughWeek(weekNumber: number) {
-  return mplIdSeason17Matches.filter(
+async function getMplIdMatchSource() {
+  return getAdminMatches();
+}
+
+function getFinishedMatchesThroughWeek(matches: Match[], weekNumber: number) {
+  return matches.filter(
     (match) => match.week <= weekNumber && match.status === "finished"
   );
 }
 
-function getScenarioMatchesThroughWeek(weekNumber: number) {
-  return mplIdSeason17Matches.map((match) => {
+function getScenarioMatchesThroughWeek(matches: Match[], weekNumber: number) {
+  return matches.map((match) => {
     if (match.week <= weekNumber) {
       return match;
     }
@@ -71,42 +78,42 @@ function getScenarioMatchesThroughWeek(weekNumber: number) {
   });
 }
 
-function getStandingsSnapshots(): StandingsSnapshot[] {
+function getStandingsSnapshots(matches: Match[]): StandingsSnapshot[] {
   return mplIdSeason17.weeks.map((week) => {
     const standings = calculateStandings(
       mplIdTeams,
-      getFinishedMatchesThroughWeek(week.weekNumber)
+      getFinishedMatchesThroughWeek(matches, week.weekNumber)
     );
 
     return {
       week: week.weekNumber,
       standings: applyPlayoffStatuses(
         standings,
-        getScenarioMatchesThroughWeek(week.weekNumber)
+        getScenarioMatchesThroughWeek(matches, week.weekNumber)
       )
     };
   });
 }
 
-function getCurrentStandings() {
+function getCurrentStandings(matches: Match[]) {
   return applyPlayoffStatuses(
-    calculateStandings(mplIdTeams, mplIdSeason17Matches),
-    mplIdSeason17Matches
+    calculateStandings(mplIdTeams, matches),
+    matches
   );
 }
 
-function getMatchesByWeek() {
-  return mplIdSeason17.weeks.reduce<Record<number, Match[]>>((weeks, week) => {
+function getMatchesByWeek(matches: Match[]) {
+  return matches.reduce<Record<number, Match[]>>((weeks, match) => {
     return {
       ...weeks,
-      [week.weekNumber]: week.matches
+      [match.week]: [...(weeks[match.week] ?? []), match]
     };
   }, {});
 }
 
-function getValidationIssues() {
+function getValidationIssues(matches: Match[]) {
   const issues = validateStandingsAgainstReference(
-    getCurrentStandings(),
+    getCurrentStandings(matches),
     mplIdSeason17StandingsReference
   );
 
@@ -117,8 +124,9 @@ function getValidationIssues() {
   return issues;
 }
 
-export function getMplIdDataStatus() {
-  const statuses = mplIdSeason17Matches.map((match) => match.verifiedDataStatus);
+export async function getMplIdDataStatus() {
+  const matchSource = await getMplIdMatchSource();
+  const statuses = matchSource.matches.map((match) => match.verifiedDataStatus);
 
   if (statuses.includes("partial")) {
     return "partial";
@@ -131,19 +139,23 @@ export function getMplIdDataStatus() {
   return "verified";
 }
 
-export function hasMplIdPartialData() {
-  return mplIdSeason17Matches.some(
+export async function hasMplIdPartialData() {
+  const matchSource = await getMplIdMatchSource();
+
+  return matchSource.matches.some(
     (match) => match.verifiedDataStatus === "partial"
   );
 }
 
 export async function getMplIdApiMeta(): Promise<ApiResponseMeta> {
+  const matchSource = await getMplIdMatchSource();
+
   return {
-    source: SOURCE_LABEL,
+    source: matchSource.source,
     regionSlug: mplIdRegion.slug,
     seasonId: mplIdSeason17.id,
-    dataStatus: getMplIdDataStatus(),
-    validationIssues: getValidationIssues().length
+    dataStatus: await getMplIdDataStatus(),
+    validationIssues: getValidationIssues(matchSource.matches).length
   };
 }
 
@@ -159,10 +171,13 @@ export async function getMplIdRegion(): Promise<MplIdRegionData> {
 // TODO: Future admin panel should update matches, not standings directly.
 // Standings should remain derived from match results. Manual override is emergency-only.
 export async function getMplIdStandings(): Promise<MplIdStandingsData> {
+  const matchSource = await getMplIdMatchSource();
+
   return {
-    currentStandings: getCurrentStandings(),
-    snapshots: getStandingsSnapshots(),
-    validationIssues: getValidationIssues()
+    currentStandings: getCurrentStandings(matchSource.matches),
+    snapshots: getStandingsSnapshots(matchSource.matches),
+    validationIssues: getValidationIssues(matchSource.matches),
+    source: matchSource.source
   };
 }
 
@@ -175,25 +190,33 @@ export async function getMplIdSeason(): Promise<Season> {
 // TODO: Replace local verified data with Liquipedia/API/database source when integration is approved.
 // TODO: Manual standings override should only be optional/emergency.
 export async function getMplIdMatches(): Promise<Match[]> {
-  return mplIdSeason17Matches;
+  const matchSource = await getMplIdMatchSource();
+
+  return matchSource.matches;
 }
 
 // TODO: Future admin panel should update matches, not standings directly.
 // TODO: Replace local internal data with database/admin panel later.
 export async function getMplIdSchedule(): Promise<MplIdScheduleData> {
+  const matchSource = await getMplIdMatchSource();
+
   return {
     currentWeek: mplIdSeason17.currentWeek,
-    matches: mplIdSeason17Matches,
-    matchesByWeek: getMatchesByWeek(),
-    standingsSnapshots: getStandingsSnapshots()
+    matches: matchSource.matches,
+    matchesByWeek: getMatchesByWeek(matchSource.matches),
+    standingsSnapshots: getStandingsSnapshots(matchSource.matches),
+    source: matchSource.source
   };
 }
 
 // TODO: Replace local verified data with Liquipedia/API/database source when integration is approved.
 export async function getMplIdTeams(): Promise<MplIdTeamsData> {
+  const matchSource = await getMplIdMatchSource();
+
   return {
     teams: mplIdTeams,
-    currentStandings: getCurrentStandings()
+    currentStandings: getCurrentStandings(matchSource.matches),
+    source: matchSource.source
   };
 }
 

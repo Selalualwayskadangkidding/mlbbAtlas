@@ -27,13 +27,21 @@ function getCompactTeamName(teams: Team[], slug: string) {
 }
 
 export default async function MplIdPage() {
-  const [regionData, scheduleData, standingsData, teamsData, apiMeta] =
+  const [
+    regionData,
+    scheduleData,
+    standingsData,
+    teamsData,
+    apiMeta,
+    hasPartialData
+  ] =
     await Promise.all([
       getMplIdRegion(),
       getMplIdSchedule(),
       getMplIdStandings(),
       getMplIdTeams(),
-      getMplIdApiMeta()
+      getMplIdApiMeta(),
+      hasMplIdPartialData()
     ]);
   const currentWeek = regionData.currentSeason.currentWeek;
   const leaderStanding = standingsData.currentStandings.find(
@@ -79,7 +87,7 @@ export default async function MplIdPage() {
         title="Current Standings"
         description="MPL Indonesia Season 17 table derived from finished match rows."
       />
-      <DataTransparencyNote hasPartialData={hasMplIdPartialData()} />
+      <DataTransparencyNote hasPartialData={hasPartialData} />
       <DevValidationSummary
         validationIssues={standingsData.validationIssues.length}
         sourceLabel={apiMeta.source}
